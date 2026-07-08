@@ -46,6 +46,7 @@ app.*.map.json
 # Firebase - NEVER push credentials
 /android/app/google-services.json
 /lib/firebase_options.dart
+/android/key.properties
 
 # Cloud Functions - node_modules
 functions/node_modules/
