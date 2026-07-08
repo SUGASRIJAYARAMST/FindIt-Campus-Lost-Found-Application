@@ -227,98 +227,233 @@ class _ItemManagementScreenState extends State<ItemManagementScreen> {
     final isLost = item.type == 'lost';
     final accentColor = isLost ? const Color(0xFFE53935) : const Color(0xFF43A047);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1A2636) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(isDark ? 15 : 5),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+    return GestureDetector(
+      onTap: () => _showItemDetail(item, isDark),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1A2636) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(isDark ? 15 : 5),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: accentColor.withAlpha(25),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: item.imageUrl.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedNetworkImage(imageUrl: item.imageUrl, fit: BoxFit.cover,
+                              placeholder: (_, _) => Container(color: accentColor.withAlpha(25)),
+                              errorWidget: (_, _, _) => Icon(
+                                isLost ? Icons.help_outline_rounded : Icons.check_circle_outline_rounded,
+                                color: accentColor,
+                                size: 22,
+                              )),
+                        )
+                      : Icon(
+                          isLost ? Icons.help_outline_rounded : Icons.check_circle_outline_rounded,
+                          color: accentColor,
+                          size: 22,
+                        ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${item.category} • ${item.location}',
+                        style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuButton<String>(
+                  itemBuilder: (ctx) => [
+                    if (item.status != 'returned' && item.status != 'recovered')
+                      const PopupMenuItem(value: 'return', child: Text('Mark as Returned')),
+                    if (item.status != 'returned' && item.status != 'recovered')
+                      const PopupMenuItem(value: 'recover', child: Text('Mark as Recovered')),
+                    const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: Color(0xFFE53935)))),
+                  ],
+                  onSelected: (value) => _handleItemAction(value, item, provider),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                _buildStatusChip(item.statusDisplay, _getStatusColor(item.status)),
+                const SizedBox(width: 8),
+                _buildTypeChip(item.typeDisplay, accentColor),
+                const Spacer(),
+                Text(
+                  _formatDate(item.createdAt),
+                  style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.black38),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-      child: Column(
+    );
+  }
+
+  void _showItemDetail(ItemModel item, bool isDark) {
+    final isLost = item.type == 'lost';
+    final accentColor = isLost ? const Color(0xFFE53935) : const Color(0xFF43A047);
+    final statusColor = _getStatusColor(item.status);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: isDark ? const Color(0xFF1A2636) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 18, 16, 0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 36, height: 36,
+                        decoration: BoxDecoration(
+                          color: accentColor.withAlpha(20),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(isLost ? Icons.help_outline_rounded : Icons.check_circle_outline_rounded, color: accentColor, size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Text('Item Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(ctx),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.close_rounded, size: 18, color: isDark ? Colors.white54 : Colors.black38),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (item.imageUrl.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: CachedNetworkImage(
+                        imageUrl: item.imageUrl,
+                        width: double.infinity,
+                        height: 180,
+                        fit: BoxFit.cover,
+                        placeholder: (_, _) => Container(
+                          height: 180,
+                          color: accentColor.withAlpha(20),
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
+                        errorWidget: (_, _, _) => Container(
+                          height: 180,
+                          color: accentColor.withAlpha(20),
+                          child: Icon(Icons.image_not_supported_rounded, color: accentColor, size: 40),
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      _buildDetailRow('Item Name', item.title, Icons.label_rounded, isDark),
+                      _buildDetailRow('Status', item.statusDisplay, Icons.info_outline_rounded, isDark, valueColor: statusColor),
+                      _buildDetailRow('Type', item.typeDisplay, isLost ? Icons.search : Icons.check_circle_outline, isDark, valueColor: accentColor),
+                      _buildDetailRow('Category', item.category, Icons.category_rounded, isDark),
+                      _buildDetailRow('Location', item.location, Icons.location_on_outlined, isDark),
+                      _buildDetailRow('Reported Date', _formatDate(item.createdAt), Icons.access_time_rounded, isDark),
+                      if (item.itemDate != null)
+                        _buildDetailRow('Item Date', _formatDate(item.itemDate), Icons.event_rounded, isDark),
+                      if (item.description.isNotEmpty)
+                        _buildDetailRow('Description', item.description, Icons.description_outlined, isDark),
+                      _buildDetailRow('Reported By', item.createdBy.isNotEmpty ? item.createdBy : 'Unknown', Icons.person_rounded, isDark),
+                      if (item.contactNumber.isNotEmpty)
+                        _buildDetailRow('Contact', item.contactNumber, Icons.phone_rounded, isDark),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value, IconData icon, bool isDark, {Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: accentColor.withAlpha(25),
-                  borderRadius: BorderRadius.circular(12),
+          Icon(icon, size: 18, color: isDark ? Colors.white38 : Colors.black38),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: isDark ? Colors.white38 : Colors.black38)),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: valueColor ?? (isDark ? Colors.white : const Color(0xFF1A1A2E)),
+                  ),
                 ),
-                child: item.imageUrl.isNotEmpty
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImage(imageUrl: item.imageUrl, fit: BoxFit.cover,
-                            placeholder: (_, _) => Container(color: accentColor.withAlpha(25)),
-                            errorWidget: (_, _, _) => Icon(
-                              isLost ? Icons.help_outline_rounded : Icons.check_circle_outline_rounded,
-                              color: accentColor,
-                              size: 22,
-                            )),
-                      )
-                    : Icon(
-                        isLost ? Icons.help_outline_rounded : Icons.check_circle_outline_rounded,
-                        color: accentColor,
-                        size: 22,
-                      ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: isDark ? Colors.white : const Color(0xFF1A1A2E),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${item.category} • ${item.location}',
-                      style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuButton<String>(
-                itemBuilder: (ctx) => [
-                  if (item.status != 'returned' && item.status != 'recovered')
-                    const PopupMenuItem(value: 'return', child: Text('Mark as Returned')),
-                  if (item.status != 'returned' && item.status != 'recovered')
-                    const PopupMenuItem(value: 'recover', child: Text('Mark as Recovered')),
-                  const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: Color(0xFFE53935)))),
-                ],
-                onSelected: (value) => _handleItemAction(value, item, provider),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              _buildStatusChip(item.statusDisplay, _getStatusColor(item.status)),
-              const SizedBox(width: 8),
-              _buildTypeChip(item.typeDisplay, accentColor),
-              const Spacer(),
-              Text(
-                _formatDate(item.createdAt),
-                style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.black38),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

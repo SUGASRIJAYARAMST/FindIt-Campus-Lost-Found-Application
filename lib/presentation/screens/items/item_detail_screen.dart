@@ -11,6 +11,7 @@ import '../../../core/providers/timeline_provider.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../domain/models/item_model.dart';
 import '../../../domain/models/timeline_event.dart';
+import '../../widgets/image_viewer_screen.dart';
 
 class ItemDetailScreen extends StatefulWidget {
   const ItemDetailScreen({super.key});
@@ -149,41 +150,52 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
       ],
       flexibleSpace: FlexibleSpaceBar(
         background: item.imageUrl.isNotEmpty
-            ? Stack(
-                fit: StackFit.expand,
-                children: [
-                   CachedNetworkImage(
-                    imageUrl: item.imageUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (_, _) => _buildPlaceholderImage(accentColor),
-                    errorWidget: (_, _, _) => _buildPlaceholderImage(accentColor),
+            ? GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ImageViewerScreen(imageUrl: item.imageUrl, heroTag: 'detail_image'),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withAlpha(180),
-                        ],
+                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Hero(
+                      tag: 'detail_image',
+                      child: CachedNetworkImage(
+                        imageUrl: item.imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (_, _) => _buildPlaceholderImage(accentColor),
+                        errorWidget: (_, _, _) => _buildPlaceholderImage(accentColor),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 16,
-                    left: 16,
-                    right: 16,
-                    child: Text(
-                      item.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withAlpha(180),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      right: 16,
+                      child: Text(
+                        item.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               )
             : _buildPlaceholderImage(accentColor),
       ),

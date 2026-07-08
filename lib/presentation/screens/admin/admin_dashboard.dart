@@ -32,16 +32,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
     super.dispose();
   }
 
-  void _scrollToFeedback() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
   void _handleSignOut(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -208,7 +198,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       isDark: isDark,
                       onTap: () {
                         Navigator.pop(ctx);
-                        _scrollToFeedback();
+                        Navigator.pushNamed(context, AppRouter.adminFeedback);
                       },
                     ),
                     const Spacer(),

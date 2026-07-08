@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../presentation/screens/admin/admin_dashboard.dart';
+import '../../presentation/screens/admin/feedback_management_screen.dart';
 import '../../presentation/screens/admin/item_management_screen.dart';
 import '../../presentation/screens/admin/user_management_screen.dart';
 import '../../presentation/screens/archive/archive_screen.dart';
@@ -43,6 +44,7 @@ class AppRouter {
   static const String adminDashboard = '/admin/dashboard';
   static const String adminUsers = '/admin/users';
   static const String adminItems = '/admin/items';
+  static const String adminFeedback = '/admin/feedback';
   static const String notifications = '/notifications';
   static const String chatList = '/chat';
   static const String conversation = '/chat/conversation';
@@ -89,6 +91,8 @@ class AppRouter {
         return _buildRoute(const UserManagementScreen(), routeSettings);
       case adminItems:
         return _buildRoute(const ItemManagementScreen(), routeSettings);
+      case adminFeedback:
+        return _buildRoute(const FeedbackManagementScreen(), routeSettings);
       case notifications:
         return _buildRoute(const NotificationsScreen(), routeSettings);
       case chatList:

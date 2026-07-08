@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../widgets/image_viewer_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/providers/auth_provider.dart';
@@ -222,25 +223,36 @@ class _ReportItemScreenState extends State<ReportItemScreen> {
           ],
         ),
         child: _imageBytes != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.memory(_imageBytes!, fit: BoxFit.cover),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withAlpha(150),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.edit_rounded, color: Colors.white, size: 18),
+            ? GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ImageViewerScreen(imageBytes: _imageBytes!, heroTag: 'upload_image'),
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Hero(
+                        tag: 'upload_image',
+                        child: Image.memory(_imageBytes!, fit: BoxFit.cover),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withAlpha(150),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.edit_rounded, color: Colors.white, size: 18),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               )
             : Column(

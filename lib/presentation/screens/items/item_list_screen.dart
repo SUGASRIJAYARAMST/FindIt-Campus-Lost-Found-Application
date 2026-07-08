@@ -107,7 +107,6 @@ class _ItemListScreenState extends State<ItemListScreen> with SingleTickerProvid
         child: Column(
           children: [
             _buildSearchBar(theme, isDark),
-            _buildCategoryChips(theme, isDark),
             _buildFilterBar(theme, isDark, locations),
             if (_showFilters) _buildFilterPanel(theme, isDark, locations),
             Flexible(
@@ -185,75 +184,6 @@ class _ItemListScreenState extends State<ItemListScreen> with SingleTickerProvid
             borderRadius: BorderRadius.circular(14),
             borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryChips(ThemeData theme, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 6),
-      child: SizedBox(
-        height: 34,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: _categories.length + 1,
-          separatorBuilder: (ctx, index) => const SizedBox(width: 8),
-          itemBuilder: (ctx, i) {
-            if (i == 0) {
-              final isSelected = _selectedCategory.isEmpty;
-              return GestureDetector(
-                onTap: () => setState(() => _selectedCategory = ''),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? theme.colorScheme.primary.withAlpha(25)
-                        : isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isSelected ? theme.colorScheme.primary.withAlpha(80) : Colors.transparent,
-                    ),
-                  ),
-                  child: Text(
-                    'All',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected ? theme.colorScheme.primary : (isDark ? Colors.white54 : Colors.black45),
-                    ),
-                  ),
-                ),
-              );
-            }
-            final cat = _categories[i - 1];
-            final isSelected = _selectedCategory == cat;
-            return GestureDetector(
-              onTap: () => setState(() => _selectedCategory = cat),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? theme.colorScheme.primary.withAlpha(25)
-                      : isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isSelected ? theme.colorScheme.primary.withAlpha(80) : Colors.transparent,
-                  ),
-                ),
-                child: Text(
-                  cat,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? theme.colorScheme.primary : (isDark ? Colors.white54 : Colors.black45),
-                  ),
-                ),
-              ),
-            );
-          },
         ),
       ),
     );
@@ -1066,7 +996,7 @@ class _ItemListScreenState extends State<ItemListScreen> with SingleTickerProvid
                       flex: 2,
                       child: GestureDetector(
                         onTap: () {
-                          setState(() {
+                           setState(() {
                             _sortBy = tempSort;
                             _dateFrom = tempFrom;
                             _dateTo = tempTo;
