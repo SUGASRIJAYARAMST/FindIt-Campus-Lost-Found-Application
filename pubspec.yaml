@@ -1,0 +1,65 @@
+name: find_it
+description: FindIt - Flutter app scaffold with Firebase, Provider, and Material 3
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^2.12.0
+  firebase_auth: ^4.6.0
+  cloud_firestore: ^4.9.0
+  firebase_messaging: ^14.7.0
+
+  # Localization
+  intl: any
+
+  # Networking for Cloudinary uploads
+  http: ^1.2.0
+
+  # State management
+  provider: ^6.0.5
+
+  # Image picker
+  image_picker: ^1.0.7
+
+  # Permission handling
+  permission_handler: ^11.3.1
+
+  # Animations
+  lottie: ^3.1.0
+  shimmer: ^3.0.0
+
+  # Local notifications
+  flutter_local_notifications: ^18.0.0
+
+  # Sharing
+  share_plus: ^10.0.0
+
+  # Image caching
+  cached_network_image: ^3.4.1
+
+  # UI
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  mockito: ^5.6.4
+  build_runner: ^2.15.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+  assets:
+    - assets/
